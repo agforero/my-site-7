@@ -22,7 +22,7 @@ export default function FancyLink({ href, title }: FancyLinkProps) {
         }}
       >
         <Box>
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="body1">{title}</Typography>
         </Box>
         <Box>
           <ArrowForward />

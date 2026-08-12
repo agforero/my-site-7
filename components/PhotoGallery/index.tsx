@@ -11,7 +11,7 @@ import Lightbox, {
 } from "yet-another-react-lightbox";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
-import type { GalleryImage } from "@/lib/flickr";
+import { formatDateTaken, type GalleryImage } from "@/lib/flickr";
 
 interface PhotoGalleryProps {
   photos: readonly GalleryImage[];
@@ -32,27 +32,18 @@ function readFlickrUrl(slide: Slide | undefined): string | undefined {
   return typeof flickrUrl === "string" ? flickrUrl : undefined;
 }
 
-function formatUploadDate(timestamp: number): string | undefined {
-  if (!Number.isFinite(timestamp) || timestamp <= 0) {
+function readCaptureDate(slide: Slide | undefined): string | undefined {
+  if (!slide || !("dateTaken" in slide) || !("dateTakenGranularity" in slide)) {
     return undefined;
   }
 
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(timestamp * 1000));
-}
+  const { dateTaken, dateTakenGranularity } = slide;
 
-function readUploadDate(slide: Slide | undefined): string | undefined {
-  if (!slide || !("dateUpload" in slide)) {
+  if (typeof dateTaken !== "string" || typeof dateTakenGranularity !== "number") {
     return undefined;
   }
 
-  const { dateUpload } = slide;
-  return typeof dateUpload === "number"
-    ? formatUploadDate(dateUpload)
-    : undefined;
+  return formatDateTaken(dateTaken, dateTakenGranularity);
 }
 
 function readPhotoTitle(slide: Slide | undefined): string | undefined {
@@ -127,9 +118,9 @@ export default function PhotoGallery({ photos, slides }: PhotoGalleryProps) {
         render={{
           slideFooter: ({ slide }) => {
             const title = readPhotoTitle(slide);
-            const uploadedOn = readUploadDate(slide);
+            const capturedOn = readCaptureDate(slide);
 
-            if (!title && !uploadedOn) {
+            if (!title && !capturedOn) {
               return null;
             }
 
@@ -148,7 +139,7 @@ export default function PhotoGallery({ photos, slides }: PhotoGalleryProps) {
                   lineHeight: DATE_FOOTER_LINE_HEIGHT,
                   paddingBlock: DATE_FOOTER_PADDING_Y,
                   paddingInline: "0.75rem",
-                  fontFamily: "var(--font-averia-serif-libre), serif",
+                  fontFamily: "var(--font-plus-jakarta-sans), sans-serif",
                   pointerEvents: "none",
                 }}
               >
@@ -172,7 +163,7 @@ export default function PhotoGallery({ photos, slides }: PhotoGalleryProps) {
                     {title}
                   </span>
                   <span style={{ flexShrink: 0, color: "#bbb" }}>
-                    {uploadedOn}
+                    {capturedOn}
                   </span>
                 </div>
               </div>

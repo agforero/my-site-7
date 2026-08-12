@@ -12,7 +12,8 @@ export interface GalleryImage {
   height: number;
   alt: string;
   srcSet: readonly GallerySource[];
-  dateUpload: number;
+  dateTaken: string;
+  dateTakenGranularity: number;
   flickrUrl: string;
 }
 
@@ -30,7 +31,8 @@ export interface FlickrGallery {
 interface FlickrPhoto {
   id: string;
   title?: string;
-  dateupload?: string | number;
+  datetaken?: string;
+  datetakengranularity?: string | number;
   url_z?: string;
   width_z?: string | number;
   height_z?: string | number;
@@ -110,9 +112,63 @@ export function getFlickrPhotoUrl(photoId: string): string {
   return `https://www.flickr.com/photos/${FLICKR_USER_ID}/${photoId}/`;
 }
 
-function parseDateUpload(value: string | number | undefined): number {
+function parseDateTaken(value: string | undefined): string {
+  return value?.trim() ?? "";
+}
+
+function parseDateTakenGranularity(
+  value: string | number | undefined,
+): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function formatDateTaken(
+  dateTaken: string,
+  granularity: number,
+): string | undefined {
+  const match = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?/.exec(dateTaken);
+
+  if (!match) {
+    return undefined;
+  }
+
+  const year = match[1];
+  const month = match[2];
+  const day = match[3];
+
+  if (!year) {
+    return undefined;
+  }
+
+  if (granularity >= 8) {
+    return `Circa ${year}`;
+  }
+
+  if (granularity >= 6 || !month) {
+    return year;
+  }
+
+  const monthIndex = Number(month) - 1;
+
+  if (!Number.isFinite(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+    return year;
+  }
+
+  if (granularity >= 4 || !day) {
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "long",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(Number(year), monthIndex, 1)));
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(Number(year), monthIndex, Number(day))));
 }
 
 export function parsePhotoSort(
@@ -141,10 +197,22 @@ function sortIndicesByDate(
   const direction = sort === "newest" ? -1 : 1;
 
   return photos
-    .map((photo, index) => ({ index, dateUpload: photo.dateUpload }))
-    .toSorted(
-      (left, right) => direction * (left.dateUpload - right.dateUpload),
-    )
+    .map((photo, index) => ({ index, dateTaken: photo.dateTaken }))
+    .toSorted((left, right) => {
+      if (!left.dateTaken && !right.dateTaken) {
+        return 0;
+      }
+
+      if (!left.dateTaken) {
+        return 1;
+      }
+
+      if (!right.dateTaken) {
+        return -1;
+      }
+
+      return direction * left.dateTaken.localeCompare(right.dateTaken);
+    })
     .map(({ index }) => index);
 }
 
@@ -244,7 +312,10 @@ function toGalleryImage(photo: FlickrPhoto): GalleryImage | undefined {
     height: gallerySource.height,
     alt: photo.title?.trim() || "Photograph",
     srcSet: gallerySrcSet.length > 0 ? gallerySrcSet : sources,
-    dateUpload: parseDateUpload(photo.dateupload),
+    dateTaken: parseDateTaken(photo.datetaken),
+    dateTakenGranularity: parseDateTakenGranularity(
+      photo.datetakengranularity,
+    ),
     flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }
@@ -268,7 +339,10 @@ function toLightboxSlide(photo: FlickrPhoto): GalleryImage | undefined {
     height: lightboxSource.height,
     alt: photo.title?.trim() || "Photograph",
     srcSet: sources,
-    dateUpload: parseDateUpload(photo.dateupload),
+    dateTaken: parseDateTaken(photo.datetaken),
+    dateTakenGranularity: parseDateTakenGranularity(
+      photo.datetakengranularity,
+    ),
     flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }
@@ -278,7 +352,7 @@ async function fetchFlickrPage(page: number): Promise<FlickrPhotosPage> {
     method: "flickr.people.getPublicPhotos",
     api_key: getApiKey(),
     user_id: FLICKR_USER_ID,
-    extras: "date_upload,url_z,url_c,url_l,url_h,url_k,url_o",
+    extras: "date_taken,url_z,url_c,url_l,url_h,url_k,url_o",
     per_page: String(PHOTOS_PER_PAGE),
     page: String(page),
     format: "json",

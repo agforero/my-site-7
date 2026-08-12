@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { Averia_Serif_Libre } from "next/font/google";
+import { Plus_Jakarta_Sans, Young_Serif } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../theme";
 import "./globals.css";
 
-const averiaSerifLibre = Averia_Serif_Libre({
-  weight: ["300", "400", "700"],
+const youngSerif = Young_Serif({
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-averia-serif-libre",
+  variable: "--font-young-serif",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${averiaSerifLibre.variable} h-full antialiased`}
+      className={`${youngSerif.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body
         className="h-full w-full flex flex-col"

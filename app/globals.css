@@ -5,9 +5,23 @@
   --foreground: #171717;
 }
 
+@theme inline {
+  --font-sans: var(--font-plus-jakarta-sans);
+  --font-serif: var(--font-young-serif);
+}
+
 @layer base {
   html {
-    font-family: var(--font-averia-serif-libre), serif;
+    font-family: var(--font-plus-jakarta-sans), sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-young-serif), serif;
   }
 }
 
@@ -21,7 +35,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-averia-serif-libre), serif;
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
 }
 
 html:has([data-page="photography"]) {
