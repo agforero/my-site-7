@@ -12,7 +12,7 @@ export default function Home() {
         alignItems: "center",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Typography variant="h1" sx={{ mb: 2 }}>
           Agustin Forero
         </Typography>

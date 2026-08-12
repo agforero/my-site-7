@@ -4,12 +4,16 @@ const PHOTOS_PER_PAGE = 500;
 const REVALIDATE_SECONDS = 3600;
 const GALLERY_MAX_WIDTH = 2048;
 
+export type PhotoSort = "newest" | "oldest" | "random";
+
 export interface GalleryImage {
   src: string;
   width: number;
   height: number;
   alt: string;
   srcSet: readonly GallerySource[];
+  dateUpload: number;
+  flickrUrl: string;
 }
 
 export interface GallerySource {
@@ -26,6 +30,7 @@ export interface FlickrGallery {
 interface FlickrPhoto {
   id: string;
   title?: string;
+  dateupload?: string | number;
   url_z?: string;
   width_z?: string | number;
   height_z?: string | number;
@@ -101,6 +106,71 @@ function getPhotosPage(response: FlickrPhotosResponse): FlickrPhotosPage {
   return response.photos;
 }
 
+export function getFlickrPhotoUrl(photoId: string): string {
+  return `https://www.flickr.com/photos/${FLICKR_USER_ID}/${photoId}/`;
+}
+
+function parseDateUpload(value: string | number | undefined): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function parsePhotoSort(
+  value: string | string[] | undefined,
+): PhotoSort {
+  const sort = Array.isArray(value) ? value[0] : value;
+
+  if (sort === "oldest" || sort === "random" || sort === "newest") {
+    return sort;
+  }
+
+  return "newest";
+}
+
+function shuffleIndices(indices: readonly number[]): readonly number[] {
+  return indices
+    .map((index) => ({ index, rank: Math.random() }))
+    .toSorted((left, right) => left.rank - right.rank)
+    .map(({ index }) => index);
+}
+
+function sortIndicesByDate(
+  photos: readonly GalleryImage[],
+  sort: "newest" | "oldest",
+): readonly number[] {
+  const direction = sort === "newest" ? -1 : 1;
+
+  return photos
+    .map((photo, index) => ({ index, dateUpload: photo.dateUpload }))
+    .toSorted(
+      (left, right) => direction * (left.dateUpload - right.dateUpload),
+    )
+    .map(({ index }) => index);
+}
+
+export function sortGallery(
+  gallery: FlickrGallery,
+  sort: PhotoSort,
+): FlickrGallery {
+  const length = Math.min(gallery.photos.length, gallery.slides.length);
+  const indices = Array.from({ length }, (_, index) => index);
+  const ordered =
+    sort === "random"
+      ? shuffleIndices(indices)
+      : sortIndicesByDate(gallery.photos.slice(0, length), sort);
+
+  return {
+    photos: ordered.flatMap((index) => {
+      const photo = gallery.photos[index];
+      return photo ? [photo] : [];
+    }),
+    slides: ordered.flatMap((index) => {
+      const slide = gallery.slides[index];
+      return slide ? [slide] : [];
+    }),
+  };
+}
+
 function toSource(
   src: string | undefined,
   width: string | number | undefined,
@@ -174,6 +244,8 @@ function toGalleryImage(photo: FlickrPhoto): GalleryImage | undefined {
     height: gallerySource.height,
     alt: photo.title?.trim() || "Photograph",
     srcSet: gallerySrcSet.length > 0 ? gallerySrcSet : sources,
+    dateUpload: parseDateUpload(photo.dateupload),
+    flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }
 
@@ -196,6 +268,8 @@ function toLightboxSlide(photo: FlickrPhoto): GalleryImage | undefined {
     height: lightboxSource.height,
     alt: photo.title?.trim() || "Photograph",
     srcSet: sources,
+    dateUpload: parseDateUpload(photo.dateupload),
+    flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }
 
@@ -204,7 +278,7 @@ async function fetchFlickrPage(page: number): Promise<FlickrPhotosPage> {
     method: "flickr.people.getPublicPhotos",
     api_key: getApiKey(),
     user_id: FLICKR_USER_ID,
-    extras: "url_z,url_c,url_l,url_h,url_k,url_o",
+    extras: "date_upload,url_z,url_c,url_l,url_h,url_k,url_o",
     per_page: String(PHOTOS_PER_PAGE),
     page: String(page),
     format: "json",
