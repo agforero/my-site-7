@@ -116,9 +116,7 @@ function parseDateTaken(value: string | undefined): string {
   return value?.trim() ?? "";
 }
 
-function parseDateTakenGranularity(
-  value: string | number | undefined,
-): number {
+function parseDateTakenGranularity(value: string | number | undefined): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 }
@@ -313,9 +311,7 @@ function toGalleryImage(photo: FlickrPhoto): GalleryImage | undefined {
     alt: photo.title?.trim() || "Photograph",
     srcSet: gallerySrcSet.length > 0 ? gallerySrcSet : sources,
     dateTaken: parseDateTaken(photo.datetaken),
-    dateTakenGranularity: parseDateTakenGranularity(
-      photo.datetakengranularity,
-    ),
+    dateTakenGranularity: parseDateTakenGranularity(photo.datetakengranularity),
     flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }
@@ -340,9 +336,7 @@ function toLightboxSlide(photo: FlickrPhoto): GalleryImage | undefined {
     alt: photo.title?.trim() || "Photograph",
     srcSet: sources,
     dateTaken: parseDateTaken(photo.datetaken),
-    dateTakenGranularity: parseDateTakenGranularity(
-      photo.datetakengranularity,
-    ),
+    dateTakenGranularity: parseDateTakenGranularity(photo.datetakengranularity),
     flickrUrl: getFlickrPhotoUrl(photo.id),
   };
 }

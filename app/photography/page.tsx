@@ -2,8 +2,7 @@ import { Box, Container, Typography } from "@mui/material";
 import PhotoGallery from "@/components/PhotoGallery";
 import SortButtonGroup from "@/components/SortButtonGroup";
 import { getFlickrGallery, parsePhotoSort, sortGallery } from "@/lib/flickr";
-import Link from "next/link";
-import DrawnBorder from "@/components/DrawnBorder";
+import PageHeader from "@/components/PageHeader";
 
 export const revalidate = 3600;
 
@@ -33,30 +32,11 @@ export default async function PhotographyPage({
           gap: 2,
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{ color: "#bbb", display: "flex", alignItems: "center", gap: 1 }}
-        >
-          <DrawnBorder>
-            <Box
-              component="span"
-              sx={{ px: 1, display: { xs: "none", sm: "block" } }}
-            >
-              <Link href="/">Agustin Forero</Link>
-            </Box>
-            <Box
-              component="span"
-              sx={{ px: 1, display: { xs: "block", sm: "none" } }}
-            >
-              <Link href="/">AGF</Link>
-            </Box>
-          </DrawnBorder>
-          /<span style={{ color: "#fff", padding: "0 8px" }}>Photography</span>
-        </Typography>
+        <PageHeader title="Photography" theme="dark" />
         <SortButtonGroup sort={sort} />
       </Box>
       {photos.length === 0 ? (
-        <Typography>No public photos found.</Typography>
+        <Typography>No public photos available.</Typography>
       ) : (
         <PhotoGallery photos={photos} slides={slides} />
       )}

@@ -12,8 +12,16 @@ export default function Home() {
         alignItems: "center",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="h1" sx={{ mb: 2 }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, maxWidth: "100%" }}>
+        <Typography
+          variant="h1"
+          sx={{
+            mb: 2,
+            maxWidth: "100%",
+            fontSize: "clamp(2.25rem, 11vw, 6rem)",
+            lineHeight: 1.15,
+          }}
+        >
           Agustin Forero
         </Typography>
         <FancyLink href="/resume" title="Resume" />
