@@ -18,6 +18,8 @@ export default function ResumePage() {
           flexDirection: "column",
           gap: 2,
           py: 2,
+          pb: 8,
+          px: 1,
           overflowY: "auto",
         }}
       >

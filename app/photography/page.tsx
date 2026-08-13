@@ -32,7 +32,7 @@ export default async function PhotographyPage({
           gap: 2,
         }}
       >
-        <PageHeader title="Photography" theme="dark" />
+        <PageHeader title="Photography" xsTitle="Photos" theme="dark" />
         <SortButtonGroup sort={sort} />
       </Box>
       {photos.length === 0 ? (
