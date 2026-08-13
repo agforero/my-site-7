@@ -27,7 +27,18 @@ function ResumeItemLine({ item }: { item: ResumeItem }) {
           speak(item.description);
         }
       }}
-      sx={hasDescription ? { cursor: "pointer" } : undefined}
+      sx={{
+        px: 0.5,
+        mx: -0.5,
+        borderRadius: 0.5,
+        ...(hasDescription ? { cursor: "pointer" } : {}),
+        "@media (hover: hover)": {
+          "&:hover": {
+            backgroundColor: "#F5E6B5",
+            outline: "1px solid #000",
+          },
+        },
+      }}
     >
       <Box sx={{ fontWeight: "bold" }} component="span">
         {item.title}
