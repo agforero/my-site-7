@@ -3,7 +3,9 @@
 import { Box, type BoxProps } from "@mui/material";
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
-const COLOR_SET = ["#607466", "#aedcc0", "#7bd389", "#38e4ae"];
+const COLOR_SET = ["ffae03", "e67f0d", "fe4e00", "e9190f", "ff0f80"].map(
+  (color) => `#${color}`,
+);
 
 interface Size {
   width: number;
