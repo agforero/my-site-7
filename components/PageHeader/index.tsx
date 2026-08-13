@@ -5,8 +5,10 @@ import Link from "next/link";
 export default function PageHeader({
   title,
   theme = "light",
+  xsTitle,
 }: {
   title: string;
+  xsTitle?: string;
   theme?: "light" | "dark";
 }) {
   return (
@@ -34,11 +36,26 @@ export default function PageHeader({
         </Box>
       </DrawnBorder>
       /
-      <span
-        style={{ color: theme === "light" ? "#000" : "#fff", padding: "0 8px" }}
+      <Box
+        component="span"
+        sx={{
+          color: theme === "light" ? "#000" : "#fff",
+          px: 1,
+          display: { xs: "none", sm: "block" },
+        }}
       >
         {title}
-      </span>
+      </Box>
+      <Box
+        component="span"
+        sx={{
+          color: theme === "light" ? "#000" : "#fff",
+          px: 1,
+          display: { xs: "block", sm: "none" },
+        }}
+      >
+        {xsTitle || title}
+      </Box>
     </Typography>
   );
 }
