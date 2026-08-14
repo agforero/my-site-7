@@ -83,7 +83,7 @@ export default function ResumePage() {
                 title: "St. Olaf College",
                 subtitle: "Bachelor of Arts in Computer Science and History",
                 description:
-                  "I earned my Bachelor of Arts from St. Olaf College in Northfield, Minnesota, where I was a double major in Computer Science and History. People sometimes ask me how the two intersect. Paradox Interactive, if you're reading this...",
+                  "I earned my Bachelor of Arts from St. Olaf College in Northfield, Minnesota, where I was a double major in Computer Science and History. People sometimes ask me how the two intersect. Paradox, if you're reading this...",
                 date: "2017-2021",
               },
             ]}
@@ -103,28 +103,28 @@ export default function ResumePage() {
                 subtitle: "Software Engineer",
                 date: "Jan 2025-Feb 2026",
                 description:
-                  "As a Software Engineer on the Apps Team at ClearBlade, I developed end-to-end application functionality using TypeScript across both the front-end and back-end, working with React and Material UI on the UI side and services running on ClearBlade Intelligent Assets on the backend. I was responsible for ensuring reliable communication between the user interface and edge/runtime components.",
+                  "As a Software Engineer on the Apps Team at ClearBlade, I developed end-to-end application functionality using TypeScript across both the front- and back-end, working with React and Material UI on the UI side and services running on ClearBlade Intelligent Assets on the back-end. I was responsible for ensuring reliable communication between the user interface and edge/runtime components.",
               },
               {
                 title: "Abstractive Health",
                 subtitle: "Founding Mid-Level Software Engineer",
                 date: "Sep 2024-Jan 2025",
                 description:
-                  "As a Founding Software Engineer at Abstractive Health, I played a key role in shaping both the technical direction and broader business strategy of the company as one of its first six employees. I contributed directly to foundational decisions that supported the company's early growth, including work that led to a pilot with NewYork-Presbyterian Hospital, one of the largest hospital systems in New York City. I built and maintained the core platform as one of two full-stack engineers, working across TypeScript, Python 3, and PostgreSQL to deliver production-grade front-end and back-end systems. My work spanned everything from application architecture to day-to-day feature development, with a strong focus on reliability, scalability, and shipping quickly in a startup environment.",
+                  "As a Founding Software Engineer at Abstractive Health, I played a key role in shaping both the technical direction and broader business strategy of the company as one of its first six employees. I contributed directly to foundational decisions that supported the company's early growth, including work that led to a pilot with NewYork-Presbyterian Hospital, one of the largest hospital systems in New York City. I built and maintained the core platform as one of two full-stack engineers, working across TypeScript, Python 3, and PostgreSQL to deliver production-grade front- and back-end systems. My work spanned everything from application architecture to day-to-day feature development, with a strong focus on reliability, scalability, and shipping quickly in a startup environment.",
               },
               {
                 title: "InterSystems",
                 subtitle: "Release Engineer",
                 date: "Jul 2022-Sep 2023",
                 description:
-                  "As a Release Engineer at InterSystems, I developed front-end and back-end tooling to streamline the rapid deployment of development environments across multiple internal teams, improving developer productivity and consistency. I also maintained FAST (Framework for Automation and Self-Service Testing), a company-wide unit testing framework that supported thousands of tests per day. Through this work, I helped ensure the stability and reliability of internal development workflows while enabling teams to move faster with greater confidence in their releases.",
+                  "As a Release Engineer at InterSystems, I developed front- and back-end tooling to streamline the rapid deployment of development environments across multiple internal teams, improving developer productivity and consistency. I also maintained FAST (Framework for Automation and Self-Service Testing), a company-wide unit testing framework that supported thousands of tests per day. Through this work, I helped ensure the stability and reliability of internal development workflows while enabling teams to move faster with greater confidence in their releases.",
               },
               {
                 title: "UW-Madison",
                 subtitle: "Research Assistant",
                 date: "Dec 2020-Mar 2021",
                 description:
-                  "While studying at St. Olaf College, I worked as a Research Assistant at the University of Wisconsin-Madison under the direction of Dr. Mark Craven. Together, we developed software suites for analyzing the relationships between SARS-CoV-2 and potential binding sites on the human proteome.",
+                  "While studying at St. Olaf College, I worked as a Research Assistant at the University of Wisconsin-Madison under the direction of Dr. Mark Craven. Together, we developed software suites for analyzing the relationships between SARS-CoV-2 and potential binding sites on the human proteome, the goal of which was to identify potential drug targets for inhibiting the virus's ability to bind to human cells.",
               },
               {
                 title: "Argonne National Laboratory",
@@ -143,7 +143,7 @@ export default function ResumePage() {
                 subtitle: "Tutor, Instructor and Program Manager",
                 date: "Jun 2021-Present",
                 description:
-                  "I have worked as a tutor, instructor, and program manager for Inspirit AI, a company that teaches middle- and high-schoolers the foundations of Python and machine learning. I have taught classes, helped student write research papers, and managed other Instructors.",
+                  "I've worked as a tutor, instructor, and program manager for Inspirit AI, a company that teaches middle- and high-schoolers the foundations of Python and machine learning. I've taught classes, helped students write research papers, and managed other Instructors.",
               },
             ]}
           />
@@ -154,7 +154,7 @@ export default function ResumePage() {
                 title: "NYC Plover Project",
                 date: "Jun 2026-Jul 2026",
                 description:
-                  "For the summer of 2026, I volunteered for the NYC Plover Project at Fort Tilden Beach. I sat outside their enclosures to make sure people didn't intrude, and worked at the booth near Jacob Riis Park to help teach people about local endangered bird species.",
+                  "For the summer of 2026, I volunteered for the NYC Plover Project at Fort Tilden Beach. I sat outside their enclosures to ensure people didn't intrude on the fledglings, and worked at the booth near Jacob Riis Park to help educate beachgoers about local endangered bird species.",
               },
               {
                 title: "Project Cicero",
@@ -167,7 +167,7 @@ export default function ResumePage() {
                 subtitle: "Tech Literacy Instructor",
                 date: "Jan 2022-May 2022",
                 description:
-                  "This was an Independent Research (INFO 7900) project conducted for Cornell under the advisement of Dr. Tapan Parikh. For eleven weeks, I taught Monday and Wednesday lectures at the Roosevelt Island Senior Center detailing how to use contemporary technologies, in combination with context on the history and development of the modern computer.",
+                  "For eleven weeks, I taught Monday and Wednesday lectures at the Roosevelt Island Senior Center detailing how to use contemporary technologies, in combination with context on the history and development of the modern computer. This was an Independent Research (INFO 7900) project conducted for Cornell under the advisement of Dr. Tapan Parikh.",
               },
             ]}
           />

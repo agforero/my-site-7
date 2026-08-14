@@ -21,7 +21,7 @@ function ResumeItemLine({ item }: { item: ResumeItem }) {
 
   return (
     <Typography
-      variant="body2"
+      variant="body1"
       onClick={() => {
         if (item.description) {
           speak(item.description);
@@ -60,7 +60,7 @@ export default function ResumeSection({ title, items }: ResumeSectionProps) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Typography variant="body1">--</Typography>
-      <Typography variant="body1">{title}</Typography>
+      <Typography variant="h6">{title}</Typography>
       {items.map((item) => (
         <ResumeItemLine key={item.title} item={item} />
       ))}
