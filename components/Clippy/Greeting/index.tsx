@@ -26,5 +26,27 @@ export default function ClippyGreeting() {
     queueClippySpeech(clippy, "Click an item for me to explain!");
   }, [clippy]);
 
+  useEffect(() => {
+    if (!clippy) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      if (clippy._balloon._active) {
+        return;
+      }
+
+      // Held speech never completes the queue, so clear it first or
+      // animate() would sit forever behind the open balloon.
+      clippy._queue.clear();
+      clippy._queue._active = false;
+      clippy.animate();
+    }, 15_000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [clippy]);
+
   return null;
 }
