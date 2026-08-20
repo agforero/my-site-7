@@ -152,7 +152,7 @@ export default function ResumePage() {
             items={[
               {
                 title: "NYC Plover Project",
-                date: "Jun 2026-Jul 2026",
+                date: "Jun 2026-Aug 2026",
                 description:
                   "For the summer of 2026, I volunteered for the NYC Plover Project at Fort Tilden Beach. I sat outside their enclosures to ensure people didn't intrude on the fledglings, and worked at the booth near Jacob Riis Park to help educate beachgoers about local endangered bird species.",
               },
