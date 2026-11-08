@@ -26,6 +26,7 @@ export default function Home() {
         </Typography>
         <FancyLink href="/resume" title="Resume" />
         <FancyLink href="/photography" title="Photography" />
+        <FancyLink href="/a2" title="A²" />
       </Box>
     </Container>
   );

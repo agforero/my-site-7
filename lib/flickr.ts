@@ -54,8 +54,8 @@ interface FlickrPhoto {
 }
 
 interface FlickrPhotosPage {
-  page: number;
-  pages: number;
+  page: string | number;
+  pages: string | number;
   photo: unknown[];
 }
 
@@ -65,12 +65,43 @@ interface FlickrPhotosResponse {
   photos?: FlickrPhotosPage;
 }
 
+interface FlickrPhotosetResponse {
+  stat: string;
+  message?: string;
+  photoset?: FlickrPhotosPage;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
 function isFlickrPhoto(value: unknown): value is FlickrPhoto {
   return isRecord(value) && typeof value.id === "string";
+}
+
+function isNumericPageField(value: unknown): boolean {
+  if (typeof value === "number") {
+    return Number.isFinite(value);
+  }
+
+  if (typeof value === "string") {
+    return value.trim() !== "" && Number.isFinite(Number(value));
+  }
+
+  return false;
+}
+
+function toPageNumber(value: string | number): number {
+  return typeof value === "number" ? value : Number(value);
+}
+
+function isFlickrPhotosPage(value: unknown): value is FlickrPhotosPage {
+  return (
+    isRecord(value) &&
+    isNumericPageField(value.page) &&
+    isNumericPageField(value.pages) &&
+    Array.isArray(value.photo)
+  );
 }
 
 function isFlickrPhotosResponse(value: unknown): value is FlickrPhotosResponse {
@@ -82,12 +113,21 @@ function isFlickrPhotosResponse(value: unknown): value is FlickrPhotosResponse {
     return true;
   }
 
-  return (
-    isRecord(value.photos) &&
-    typeof value.photos.page === "number" &&
-    typeof value.photos.pages === "number" &&
-    Array.isArray(value.photos.photo)
-  );
+  return isFlickrPhotosPage(value.photos);
+}
+
+function isFlickrPhotosetResponse(
+  value: unknown,
+): value is FlickrPhotosetResponse {
+  if (!isRecord(value) || typeof value.stat !== "string") {
+    return false;
+  }
+
+  if (value.photoset === undefined) {
+    return true;
+  }
+
+  return isFlickrPhotosPage(value.photoset);
 }
 
 function getApiKey(): string {
@@ -106,6 +146,27 @@ function getPhotosPage(response: FlickrPhotosResponse): FlickrPhotosPage {
   }
 
   return response.photos;
+}
+
+function getPhotosetPage(response: FlickrPhotosetResponse): FlickrPhotosPage {
+  if (response.stat !== "ok" || response.photoset === undefined) {
+    throw new Error(response.message ?? "Flickr request failed");
+  }
+
+  return response.photoset;
+}
+
+function toFlickrGallery(flickrPhotos: readonly FlickrPhoto[]): FlickrGallery {
+  return {
+    photos: flickrPhotos.flatMap((photo) => {
+      const image = toGalleryImage(photo);
+      return image ? [image] : [];
+    }),
+    slides: flickrPhotos.flatMap((photo) => {
+      const slide = toLightboxSlide(photo);
+      return slide ? [slide] : [];
+    }),
+  };
 }
 
 export function getFlickrPhotoUrl(photoId: string): string {
@@ -341,12 +402,14 @@ function toLightboxSlide(photo: FlickrPhoto): GalleryImage | undefined {
   };
 }
 
+const FLICKR_PHOTO_EXTRAS = "date_taken,url_z,url_c,url_l,url_h,url_k,url_o";
+
 async function fetchFlickrPage(page: number): Promise<FlickrPhotosPage> {
   const params = new URLSearchParams({
     method: "flickr.people.getPublicPhotos",
     api_key: getApiKey(),
     user_id: FLICKR_USER_ID,
-    extras: "date_taken,url_z,url_c,url_l,url_h,url_k,url_o",
+    extras: FLICKR_PHOTO_EXTRAS,
     per_page: String(PHOTOS_PER_PAGE),
     page: String(page),
     format: "json",
@@ -370,28 +433,74 @@ async function fetchFlickrPage(page: number): Promise<FlickrPhotosPage> {
   return getPhotosPage(payload);
 }
 
-export async function getFlickrGallery(): Promise<FlickrGallery> {
-  const firstPage = await fetchFlickrPage(1);
-  const remainingPageNumbers = Array.from(
-    { length: Math.max(firstPage.pages - 1, 0) },
+async function fetchFlickrPhotosetPage(
+  photosetId: string,
+  page: number,
+): Promise<FlickrPhotosPage> {
+  const params = new URLSearchParams({
+    method: "flickr.photosets.getPhotos",
+    api_key: getApiKey(),
+    user_id: FLICKR_USER_ID,
+    photoset_id: photosetId,
+    extras: FLICKR_PHOTO_EXTRAS,
+    per_page: String(PHOTOS_PER_PAGE),
+    page: String(page),
+    format: "json",
+    nojsoncallback: "1",
+  });
+
+  const response = await fetch(`${FLICKR_REST_URL}?${params.toString()}`, {
+    next: { revalidate: REVALIDATE_SECONDS },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Flickr request failed with status ${response.status}`);
+  }
+
+  const payload: unknown = await response.json();
+
+  if (!isFlickrPhotosetResponse(payload)) {
+    throw new Error("Unexpected Flickr response");
+  }
+
+  return getPhotosetPage(payload);
+}
+
+function remainingFlickrPageNumbers(
+  pages: string | number,
+): readonly number[] {
+  return Array.from(
+    { length: Math.max(toPageNumber(pages) - 1, 0) },
     (_, index) => index + 2,
   );
+}
+
+export async function getFlickrGallery(): Promise<FlickrGallery> {
+  const firstPage = await fetchFlickrPage(1);
   const remainingPages = await Promise.all(
-    remainingPageNumbers.map(fetchFlickrPage),
+    remainingFlickrPageNumbers(firstPage.pages).map(fetchFlickrPage),
   );
   const flickrPhotos = [
     ...firstPage.photo,
     ...remainingPages.flatMap((page) => page.photo),
   ].filter(isFlickrPhoto);
 
-  return {
-    photos: flickrPhotos.flatMap((photo) => {
-      const image = toGalleryImage(photo);
-      return image ? [image] : [];
-    }),
-    slides: flickrPhotos.flatMap((photo) => {
-      const slide = toLightboxSlide(photo);
-      return slide ? [slide] : [];
-    }),
-  };
+  return toFlickrGallery(flickrPhotos);
+}
+
+export async function getFlickrAlbumGallery(
+  photosetId: string,
+): Promise<FlickrGallery> {
+  const firstPage = await fetchFlickrPhotosetPage(photosetId, 1);
+  const remainingPages = await Promise.all(
+    remainingFlickrPageNumbers(firstPage.pages).map((page) =>
+      fetchFlickrPhotosetPage(photosetId, page),
+    ),
+  );
+  const flickrPhotos = [
+    ...firstPage.photo,
+    ...remainingPages.flatMap((page) => page.photo),
+  ].filter(isFlickrPhoto);
+
+  return toFlickrGallery(flickrPhotos);
 }

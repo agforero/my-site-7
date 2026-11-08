@@ -37,6 +37,46 @@ body {
   font-family: var(--font-plus-jakarta-sans), sans-serif;
 }
 
-html:has([data-page="photography"]) {
+html:has([data-page="a2-home"]) {
+  background-color: #e5d6f0;
+}
+
+html:has([data-page="photography"]),
+html:has([data-page="order-form"]) {
   background-color: #000;
+}
+
+.order-form-lightbox-button {
+  color: #e4c65a !important;
+}
+
+.order-form-lightbox-button .yarl__icon {
+  color: inherit;
+  filter: drop-shadow(0 0 2px rgba(228, 198, 90, 0.45));
+  animation: order-form-gold-shine 5.5s ease-in-out infinite;
+}
+
+@keyframes order-form-gold-shine {
+  0%,
+  78%,
+  100% {
+    color: #d4af37;
+    filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4));
+  }
+
+  84% {
+    color: #fff1a8;
+    filter: drop-shadow(0 0 10px rgba(255, 230, 140, 0.95)) brightness(1.35);
+  }
+
+  90% {
+    color: #f0d56c;
+    filter: drop-shadow(0 0 5px rgba(240, 213, 108, 0.7)) brightness(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-form-lightbox-button .yarl__icon {
+    animation: none;
+  }
 }

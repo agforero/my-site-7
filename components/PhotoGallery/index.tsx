@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import OpenInNew from "@mui/icons-material/OpenInNew";
+import ShoppingBagOutlined from "@mui/icons-material/ShoppingBagOutlined";
 import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
 import Lightbox, {
@@ -12,6 +13,7 @@ import Lightbox, {
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
 import { formatDateTaken, type GalleryImage } from "@/lib/flickr";
+import { buildOrderFormUrl } from "@/lib/orderFormUrl";
 
 interface PhotoGalleryProps {
   photos: readonly GalleryImage[];
@@ -77,6 +79,28 @@ function FlickrLinkButton() {
   );
 }
 
+function OrderFormButton() {
+  const { currentSlide } = useLightboxState();
+  const imageUrl = currentSlide?.src;
+
+  if (!imageUrl) {
+    return null;
+  }
+
+  return (
+    <a
+      href={buildOrderFormUrl(imageUrl)}
+      target="_blank"
+      rel="noreferrer"
+      title="Order this photo"
+      aria-label="Order this photo"
+      className={`${cssClass("button")} order-form-lightbox-button`}
+    >
+      <ShoppingBagOutlined className={cssClass("icon")} fontSize="small" />
+    </a>
+  );
+}
+
 export default function PhotoGallery({ photos, slides }: PhotoGalleryProps) {
   const [index, setIndex] = useState<number | null>(null);
 
@@ -105,6 +129,7 @@ export default function PhotoGallery({ photos, slides }: PhotoGalleryProps) {
         plugins={[Zoom]}
         toolbar={{
           buttons: [
+            <OrderFormButton key="order" />,
             <FlickrLinkButton key="flickr" />,
             "zoom",
             "close",
