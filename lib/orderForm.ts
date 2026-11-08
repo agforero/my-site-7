@@ -1,4 +1,4 @@
-import { ORDER_PHOTOS, type OrderPhoto } from "@/data/orderPhotos";
+import { getCargoAlbumPhotos, type OrderPhoto } from "@/lib/cargoPhotos";
 import { getFlickrAlbumGallery } from "@/lib/flickr";
 
 export {
@@ -6,6 +6,8 @@ export {
   ORDER_GOOGLE_FORM_BASE_URL,
   ORDER_GOOGLE_FORM_PHOTO_ENTRY,
 } from "@/lib/orderFormUrl";
+
+export type { OrderPhoto };
 
 export const ORDER_FLICKR_ALBUM_ID = "72177720334591696";
 
@@ -42,14 +44,18 @@ function shuffleOrderPhotos(
 }
 
 export async function getShuffledOrderPhotos(): Promise<readonly OrderPhoto[]> {
-  const { photos } = await getFlickrAlbumGallery(ORDER_FLICKR_ALBUM_ID);
-  const flickrPhotos = photos.map((photo) => ({
+  const [cargoPhotos, flickrGallery] = await Promise.all([
+    getCargoAlbumPhotos(),
+    getFlickrAlbumGallery(ORDER_FLICKR_ALBUM_ID),
+  ]);
+
+  const flickrPhotos = flickrGallery.photos.map((photo) => ({
     src: photo.src,
     name: photo.alt,
   }));
 
   return shuffleOrderPhotos(
-    [...ORDER_PHOTOS, ...flickrPhotos],
+    [...cargoPhotos, ...flickrPhotos],
     ORDER_PHOTO_SHUFFLE_SEED,
   );
 }

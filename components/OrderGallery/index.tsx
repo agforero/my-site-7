@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { RowsPhotoAlbum, type Photo } from "react-photo-album";
 import "react-photo-album/rows.css";
+import type { OrderPhoto } from "@/lib/cargoPhotos";
 import { buildOrderFormUrl } from "@/lib/orderFormUrl";
-import type { OrderPhoto } from "@/data/orderPhotos";
 
 interface OrderGalleryProps {
   photos: readonly OrderPhoto[];
